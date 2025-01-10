@@ -3,10 +3,10 @@ package exercise_bonus;
 import java.util.Scanner;
 
 public class MenuBanco {
-    public static void inicio(){
+    public static void inicio() {
         Scanner scanner = new Scanner(System.in);
-        INotificador notificador = new Notificador();
         ContaBancaria conta = null;
+        Notificador emailNotificador = new EmailNotificadorImpl();
 
         System.out.println("Bem-vindo ao sistema bancário!");
         System.out.println("Escolha o tipo de conta:");
@@ -21,23 +21,18 @@ public class MenuBanco {
         if (tipoConta == 1) {
             System.out.print("Digite a taxa de manutenção: ");
             double taxaManutencao = scanner.nextDouble();
-            conta = new ContaCorrente(titular, taxaManutencao, notificador);
+            conta = new ContaCorrente(titular, taxaManutencao, emailNotificador);
         } else if (tipoConta == 2) {
             System.out.print("Digite a taxa de rendimento (%): ");
             double taxaRendimento = scanner.nextDouble();
-            conta = new ContaPoupanca(titular, taxaRendimento, notificador);
+            conta = new ContaPoupanca(titular, taxaRendimento, emailNotificador);
         } else {
             System.out.println("Opção inválida.");
             System.exit(0);
         }
         int opcao = 0;
-        while (opcao !=5) {
-            System.out.println("\nEscolha uma operação:");
-            System.out.println("1. Depositar");
-            System.out.println("2. Sacar");
-            System.out.println("3. Aplicar Taxas");
-            System.out.println("4. Consultar Saldo");
-            System.out.println("5. Sair");
+        while (opcao != 5) {
+            exibeMenu();
             opcao = scanner.nextInt();
 
             switch (opcao) {
@@ -45,12 +40,14 @@ public class MenuBanco {
                     System.out.print("Digite o valor do depósito: ");
                     double valorDeposito = scanner.nextDouble();
                     conta.depositar(valorDeposito);
+                    emailNotificador.enviarNotificacao();
                     break;
                 case 2:
                     System.out.print("Digite o valor do saque: ");
                     double valorSaque = scanner.nextDouble();
                     try {
                         conta.sacar(valorSaque);
+                        emailNotificador.enviarNotificacao();
                     } catch (IllegalArgumentException e) {
                         System.out.println("Erro: " + e.getMessage());
                     }
@@ -72,6 +69,16 @@ public class MenuBanco {
                 default:
                     System.out.println("Opção inválida.");
             }
+
         }
+    }
+
+    private static void exibeMenu() {
+        System.out.println("\nEscolha uma operação:");
+        System.out.println("1. Depositar");
+        System.out.println("2. Sacar");
+        System.out.println("3. Aplicar Taxas");
+        System.out.println("4. Consultar Saldo");
+        System.out.println("5. Sair");
     }
 }

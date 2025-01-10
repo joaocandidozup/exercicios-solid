@@ -1,8 +1,9 @@
 package exercise_bonus;
 
-public class Notificador implements INotificador {
+public interface Notificador {
+    void enviarNotificacao();
 
-    public void enviarNotificacao(String mensagem) {
-        System.out.println("Notificação: " + mensagem);
-    }
+
+
+
 }
